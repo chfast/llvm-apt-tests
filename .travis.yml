@@ -5,7 +5,9 @@ services:
 
 env:
   - VERSION=3.8 SYSTEM=xenial
+  - VERSION=3.8 SYSTEM=jessie
   - VERSION=3.9 SYSTEM=xenial
+  - VERSION=4.0 SYSTEM=xenial
 
 script:
   - source configure.sh
