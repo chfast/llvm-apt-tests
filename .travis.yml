@@ -21,6 +21,6 @@ script:
   - docker cp test-llvm-package.cmake $CONTAINER:/test-llvm-package.cmake
 
   - docker exec $CONTAINER dpkg-query -L llvm-$VERSION-dev
-  - docker exec $CONTAINER cmake -P test-llvm-package.cmake
+  - docker exec $CONTAINER cmake -DLLVM_DIR="$LLVM_DIR" -P test-llvm-package.cmake
 
   - docker kill $CONTAINER
