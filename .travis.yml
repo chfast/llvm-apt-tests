@@ -1,20 +1,21 @@
 language: cpp
 dist: trusty
+services:
+  - docker
 
 env:
   - VERSION=3.8
-  - VERSION=3.9
-  - VERSION=4.0
 
-before_install:
-  - wget -O - http://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
-  - sudo add-apt-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.8 main"
-  - sudo add-apt-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty-3.9 main"
-  - sudo add-apt-repository "deb http://apt.llvm.org/trusty/ llvm-toolchain-trusty main"
-  - sudo apt-get update
-  - sudo apt-get install -y llvm-$VERSION-dev
 script:
-  - echo $PATH
-  - ls -l /usr/share
-  - ls -l /usr/lib/llvm-$VERSION
-  - cmake -P test-llvm-package.cmake -DTEST_LLVM_VERSION=$VERSION -DCMAKE_PREFIX_PATH="/usr:/usr/lib/llvm-$VERSION/share"
+  - export CONTAINER=`docker run -d ubuntu:xenial tail -f /dev/null`
+  - docker exec $CONTAINER cat /etc/issue
+  - docker exec $CONTAINER sh -c 'echo "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-3.8 main" >> /etc/apt/sources.list'
+  - docker exec $CONTAINER apt-get -qq update
+  - docker exec $CONTAINER apt-get -qq install -y --allow-unauthenticated cmake llvm-3.8-dev
+
+  - docker cp test-llvm-package.cmake $CONTAINER:/test-llvm-package.cmake
+
+  - docker exec $CONTAINER dpkg-query -L llvm-3.8-dev
+  - docker exec $CONTAINER cmake -P test-llvm-package.cmake
+
+  - docker kill $CONTAINER
