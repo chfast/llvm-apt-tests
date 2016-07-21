@@ -18,9 +18,9 @@ script:
   - docker exec $CONTAINER apt-get -q update
   - docker exec $CONTAINER apt-get -q install -y --allow-unauthenticated cmake llvm-$VERSION-dev
 
-  - docker cp test-llvm-package.cmake $CONTAINER:/test-llvm-package.cmake
+  - docker cp CMakeLists.txt $CONTAINER:/CMakeLists.txt
 
   - docker exec $CONTAINER dpkg-query -L llvm-$VERSION-dev
-  - docker exec $CONTAINER cmake -DLLVM_DIR="$LLVM_DIR" -P test-llvm-package.cmake
+  - docker exec $CONTAINER cmake . -DLLVM_DIR="$LLVM_DIR"
 
   - docker kill $CONTAINER
